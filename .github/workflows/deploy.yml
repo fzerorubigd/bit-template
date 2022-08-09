@@ -1,0 +1,29 @@
+---
+name: "Release"
+
+on:
+  push:
+    tags:
+    - '*'
+
+jobs:
+  release:
+    name: "Release"
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: Checkout repository and submodules
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Install openscad
+        run: sudo apt-get install -y openscad
+      - name: "Build and Upload"
+        run: make zip
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: false
+          files: |
+            dist/*.stl
+            game-insert.zip
